@@ -58,6 +58,8 @@ namespace Bloe_web
             services.AddScoped<ICategoryRepo, CategoryRepo>();
             services.AddScoped<IArticleRepo, ArticleRepo>();
 
+            services.AddScoped<IUserFollowedCategoryRepo, UserFollowedCategoryRepo>();
+
             services.AddAuthentication();
             
         }

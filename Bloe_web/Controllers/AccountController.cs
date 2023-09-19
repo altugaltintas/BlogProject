@@ -49,6 +49,7 @@ namespace Bloe_web.Controllers
                 //Mutate şekil vermek demek
                 image.Mutate(a => a.Resize(70, 70));
                 image.Save($"wwwroot/Resimler/{appUser.UserName}.jpg");
+
                 appUser.ImagePath = $"/Resimler/{appUser.UserName}.jpg";
 
                 await _userRepo.Create(appUser);

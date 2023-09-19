@@ -17,12 +17,14 @@ namespace Bloe_web.Areas.Member.Controllers
         private readonly IMapper _mapper;
         private readonly ICategoryRepo _categoryRepo;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IUserFollowedCategoryRepo _usercateRepo;
 
-        public CategoryController(IMapper mapper, ICategoryRepo categoryRepo,UserManager<AppUser> userManager)
+        public CategoryController(IMapper mapper, ICategoryRepo categoryRepo,UserManager<AppUser> userManager, IUserFollowedCategoryRepo usercateRepo)
         {
             _mapper = mapper;
             _categoryRepo = categoryRepo;
             _userManager = userManager;
+            _usercateRepo = usercateRepo;
         }
 
 
@@ -49,12 +51,18 @@ namespace Bloe_web.Areas.Member.Controllers
         }
 
 
-        public IActionResult List()
+        public async  Task<IActionResult> List()
         {
+            AppUser appUser=await _userManager.GetUserAsync(User);
+
+            ViewBag.list = _usercateRepo.GetFollowedCategories(a => a.AppUserID == appUser.Id);  // kendi takip ettklerimi yakaladım 
+
             var list = _categoryRepo.GetDefaults(a => a.Statu != Statu.Passive);
             return View(list);
 
         }
+
+        
 
 
         public IActionResult Update(int id)    // getirme işlemini yapyıro  ıd yakalayarak posta düşüyor 
@@ -91,6 +99,17 @@ namespace Bloe_web.Areas.Member.Controllers
                 new UserFollowedCategory() { CategoryID=id,Category=category,AppUser=appUser,AppUserID=appUser.Id}
                 
                 );
+
+            _categoryRepo.Update(category);
+            return RedirectToAction("List");
+        }
+
+
+        public async Task<IActionResult> UnFollow(int id)
+        {
+            AppUser appUser = await _userManager.GetUserAsync(User);
+
+            _usercateRepo.Delete(_usercateRepo.GetUserFollowedCategory(a => a.AppUserID == appUser.Id && a.CategoryID == id));
             return RedirectToAction("List");
         }
 

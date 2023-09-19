@@ -22,7 +22,14 @@
                             <td>
                                 <a asp-action="Update" asp-route-id="@item.ID" class="btn btn-success">Güncelle</a>
                                 <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-danger">Sil</a>
-                                <a asp-action="Follow" asp-route-id="@item.ID" class="btn btn-info">Takip Et</a>
+                                @if ((ViewBag.list as IEnumerable<UserFollowedCategory>).Any(a=> a.CategoryID==item.ID))
+                                {
+                                    <a asp-action="UnFollow" asp-route-id="@item.ID" class="btn btn-info">Takip Bırak</a>
+                                }
+                                else
+                                {
+                                    <a asp-action="Follow" asp-route-id="@item.ID" class="btn btn-info">Takip Et</a>
+                                }
                             </td>
                         </tr>
 

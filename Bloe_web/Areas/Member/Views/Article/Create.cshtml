@@ -1,0 +1,50 @@
+﻿@model ArticleCreateVM
+
+
+
+
+
+<div class="row">
+    <div class="card col-md-10 offset-1">
+        <div class="card-body">
+            <div class="card-text">MAKALE OLUŞTURMA PANELİ</div>
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label asp-for="Title"></label>
+                    <input asp-for="Title" type="text" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Content"></label>
+                     <textarea rows="20" cols="30" asp-for="Content" class="form-control"></textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Image"></label>
+                    <input asp-for="Image" type="file" class="form-control" />
+                    <span asp-validation-for="Image" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CategoryID"></label>
+                    <select asp-for="CategoryID">
+                        <option disabled selected>Lütfen seçim yapınız</option>
+                        @foreach (var item in Model.Categories)
+                        {
+                            <option value="@item.ID"> @item.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CategoryID" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="AppUserID" type="hidden" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-success" value="Oluştur" />
+                </div>
+            </form>
+        </div>
+
+
+
+    </div>
+</div>
