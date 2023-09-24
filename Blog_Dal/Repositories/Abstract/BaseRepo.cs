@@ -14,7 +14,7 @@ namespace Blog_Dal.Repositories.Abstract
 {
     public class BaseRepo<T> : IBaseRepo<T> where T : BaseEntity
     {
-        private readonly ProjectContext _context;
+        protected readonly ProjectContext _context;
         private readonly DbSet<T> _table;
 
         public BaseRepo(ProjectContext context)
@@ -36,19 +36,17 @@ namespace Blog_Dal.Repositories.Abstract
             _context.SaveChanges();
         }
 
-        
-        TResult IBaseRepo<T>.GetByDefault<TResult>(
+
+        public TResult GetByDefault<TResult>(
             Expression<Func<T, TResult>> selector,
             Expression<Func<T, bool>> expression,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>> include)
+            Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
             IQueryable<T> query = _table;
 
-           if (include != null) query = include(query); 
-
+            if (include != null) query = include(query);
             return query.Where(expression).Select(selector).FirstOrDefault();
         }
-
 
         public List<TResult> GetByDefaults<TResult>(
             Expression<Func<T, TResult>> selector,
@@ -76,6 +74,7 @@ namespace Blog_Dal.Repositories.Abstract
 
         public void Update(T entity)
         {
+            entity.Statu = Statu.Modified;
             _table.Update(entity);
             _context.SaveChanges();
         }

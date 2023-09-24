@@ -30,7 +30,12 @@ namespace Bloe_web.Areas.Member.Models.VMs
         public string UserID { get; set; }
         public string UserFUllName { get; set; }
         public string UserImage { get; set; }
-        public DateTime UserCreatedDate { get; set; }
+
+
+        public string AppUserID { get; set; } // claımleri onaylanmış içerdeki kişi illa makale yazarı olmak zorunda değil
+
+
+        public DateTime UserCreatedDate { get; set; } 
 
         // toDo : commetn???
     }

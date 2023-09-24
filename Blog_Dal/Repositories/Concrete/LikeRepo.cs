@@ -5,6 +5,8 @@ using Blog_model.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace Blog_Dal.Repositories.Concrete
@@ -32,6 +34,11 @@ namespace Blog_Dal.Repositories.Concrete
             
              _table.Remove(like);   // veritabanından siler.
             _context.SaveChanges();
+        }
+
+        public Like GetDefault(Expression<Func<Like, bool>> expression)
+        {
+            return _table.Where(expression).FirstOrDefault();
         }
     }
 }

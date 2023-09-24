@@ -2,7 +2,6 @@
 using Bloe_web.Areas.Member.Models.DTOs;
 using Bloe_web.Areas.Member.Models.VMs;
 using Blog_Dal.Context;
-using Blog_Dal.Repositories.Concrete;
 using Blog_Dal.Repositories.Interfaces.Concrete;
 using Blog_model.Models.Concrete;
 using Blog_model.Models.Enums;
@@ -31,14 +30,16 @@ namespace Bloe_web.Areas.Member.Controllers
         private readonly IArticleRepo _articleRepo;
         private readonly IMapper _mapper;
         private readonly ProjectContext _project;
+        private readonly ILikeRepo _likeRepo;
 
-        public ArticleController(UserManager<AppUser> userManager, ICategoryRepo cRepo, IArticleRepo articleRepo, IMapper mapper, ProjectContext project)
+        public ArticleController(UserManager<AppUser> userManager, ICategoryRepo cRepo, IArticleRepo articleRepo, IMapper mapper, ProjectContext project,ILikeRepo likeRepo)
         {
             _userManager = userManager;
             _cRepo = cRepo;
             _articleRepo = articleRepo;
             _mapper = mapper;
             _project = project;
+            _likeRepo = likeRepo;
         }
 
 
@@ -225,7 +226,7 @@ namespace Bloe_web.Areas.Member.Controllers
 
             // toDo : Foto güncellenmezse eski foto kullanıcıya sunulmalı isterse günecllenemeli   // yapıldı
 
-            // toDo : Foto günecllerse bu maakaleye ait eski fotorağ wwwrootan silinmeli yerine yeni foto  eklenmeli   """"""""""""""" bir tek bu kaldı
+            // toDo : Foto günecllerse bu maakaleye ait eski fotorağ wwwrootan silinmeli yerine yeni foto  eklenmeli   """"""""""""""" yapıldı
 
 
         }
@@ -241,9 +242,11 @@ namespace Bloe_web.Areas.Member.Controllers
             return RedirectToAction("List");
         }
 
-        public IActionResult Detail(int id)
+        public async Task<IActionResult> Detail(int id)
 
         {
+            AppUser appUser= await _userManager.GetUserAsync(User);
+
             var article = _articleRepo.GetByDefault
                (selector: a => new ArticleDetailVM()
                {
@@ -258,12 +261,42 @@ namespace Bloe_web.Areas.Member.Controllers
                    UserID = a.AppUserID,
                    UserCreatedDate = a.AppUser.CreatedDate,
                    UserFUllName = a.AppUser.FullName,
-                   UserImage = a.AppUser.ImagePath
+                   UserImage = a.AppUser.ImagePath,
+                   AppUserID=appUser.Id
+
                },
                expression: a => a.Statu != Statu.Passive && a.ID == id,
                include: a => a.Include(a => a.AppUser).Include(a => a.Category)
                );
             return View(article);
         }
+
+        public async Task<IActionResult> Like (int id)
+        {
+            Article article = _articleRepo.GetDefault(a => a.ID == id);
+
+            AppUser appUser = await _userManager.GetUserAsync(User);
+
+            Like like = new Like() { ArticleID = id, Article = article, AppUser = appUser, AppUserID = appUser.Id };
+
+            _likeRepo.Create(like);
+
+            return RedirectToAction("Detail", new { id = id }); // burada detail actionuna gönderdiğimz parametre değişkenin adı neyse ona elimizdeki MakaleID yi atıyoruz çünkü detail sayfası makaleID siz çalışmaz
+        }
+        public async Task<IActionResult> Unlike (int id) //makaleid
+        {
+            Article article = _articleRepo.GetDefault(a => a.ID == id);
+
+            AppUser appUser = await _userManager.GetUserAsync(User);
+
+
+            Like like = _likeRepo.GetDefault(a => a.AppUserID == appUser.Id && a.ArticleID == article.ID);
+
+            _likeRepo.Delete(like);
+
+            return RedirectToAction("Detail", new { id = id });
+        }
+       
+
     }
 }

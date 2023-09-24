@@ -1,0 +1,18 @@
+﻿@model List<TopFourUserVM>
+
+
+@foreach (var item in Model)
+{
+    
+    <div class="card">
+        <div class="card-body">
+
+            <p>Yazar Adı : <a asp-action="" asp-controller="" asp-route-id="@item.UserID">@item.FullNAme</a> </p>
+            <p>Tüm Makale  Sayısı @item.AllArticleCounnt</p>
+            <p>Tüm Okunabilir Makale  Sayısı @item.AllNotPassiveArticleCount</p>
+        </div>
+    </div>
+       
+        
+    
+}

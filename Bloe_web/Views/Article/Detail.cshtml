@@ -23,39 +23,23 @@
 
                 </div>
                 <div class="col-auto d-none d-lg-block">
-                    <img src="@Model.UserImage" width="200" height="300"/>
+                    <img src="@Model.UserImage" width="200" height="300" />
                 </div>
             </div>
-        </div>        
+        </div>
     </div>
 </div>
 <main role="main" class="container">
     <div class="row">
         <div class="col-md-8 blog-main">
-            
+
 
             <div class="blog-post">
                 <h2 class="blog-post-title">@Model.Title</h2>
                 <p class="blog-post-meta">@Model.CreatedDate.ToShortDateString() <a href="#">@Model.UserFUllName</a></p>
-                <p>@Model.Content</p>                
-            </div>    
-           <div class="row m-3">
-               @if (Model.Likes.Any(a=> a.AppUserID==Model.AppUserID))
-                {
-                    <a asp-action="Unlike" asp-controller="Article" asp-route-id="@Model.ArticleID">
-                       <i class="fa fa-heart" style="color:red;"></i>
-                       <label>@Model.Likes.Count()</label>
-                    </a>
-
-                }
-                else
-                {
-                    <a asp-action="Like"  asp-route-id="@Model.ArticleID">
-                        <i class="fa fa-heart-o" style="color:red;"></i>
-                        <label>@Model.Likes.Count()</label>
-                    </a>
-                }
+                <p>@Model.Content</p>
             </div>
+           
         </div>
     </div>
 </main>
