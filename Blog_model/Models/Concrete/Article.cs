@@ -12,7 +12,7 @@ namespace Blog_model.Models.Concrete
         {
             Likes = new List<Like>();
             Comments = new List<Comment>();   // list yapısı olarak  navporp var ise çoklu ilişliklerde constructor olarak eklenmesi gerekiyor
-            
+            //Categories = new List<Category>();
         }
 
         public string Title { get; set; }
@@ -20,6 +20,9 @@ namespace Blog_model.Models.Concrete
         public string Content { get; set; }
 
         public string ImagePath { get; set; }
+
+        // okuma sayısı 
+        public int OkunmaSayisi { get; set; }
 
 
         [NotMapped]
@@ -42,11 +45,22 @@ namespace Blog_model.Models.Concrete
 
         public List<Comment> Comments { get; set; }
 
+
+
+
+
+
         // 1 makalenin 1 kategorisi
 
-        public int CategoryID { get; set; }
 
-        public Category Category{ get; set; }
+        //public int CategoryID { get; set; }
+
+        //public Category Category { get; set; }
+
+        public List<ArticleCategory> ArticleCategories { get; set; }
+
+      
+
 
     }
 }

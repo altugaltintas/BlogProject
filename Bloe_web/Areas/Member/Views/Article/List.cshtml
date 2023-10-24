@@ -3,37 +3,44 @@
 
 <div class="row">
     <div class="card col-md-12">
-        <div class="card-header">
-            <h3 class="card-title">Makale Listeleme Paneli</h3>
-        </div>
-        <div class="card-body">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Image</th>
-                        <th>Category Name</th>
-                        <th>User FullName</th>
-                        <th>Operations</th>
-                    </tr>
-                </thead>
+        <div class="card-body">            
+            <div class="card-header  bg-info text-white text-center   py-2 ">
+                <h2> Makale Listeleme Paneli</h2>
+            </div>            
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Image</th>
+                            <th>Category Name</th>
+                            <th>User FullName</th>
+                            <th>Operations</th>
+                        </tr>
+                    </thead>
 
-                <tbody></tbody>
-                @foreach (GetArticleVM item in Model)
-                {
-                    <tr>
-                        <td>@item.Title</td>
-                        <td><img src="@item.Image" /></td>
-                        <td>@item.CategoryName</td>
-                        <td>@item.FullName</td>
-                        <td><a asp-action="Update" asp-route-id="@item.ArticleID" class="btn btn-success">Güncelle</a></td>
-                        <td><a asp-action="Delete" asp-route-id="@item.ArticleID" class="btn btn-danger">Sil</a></td>
-                        <td><a asp-action="Detail" asp-route-id="@item.ArticleID" class="btn btn-info">Detay</a></td>
-                    </tr>
-                    
-                }
-            </table>
+                    <tbody></tbody>
+                    @foreach (GetArticleVM item in Model)
+                    {
+                        <tr>
+                            <td>@item.Title</td>
+                            <td><img src="@item.Image" /></td>
+                            <td>
+                                @foreach (var categoryName in item.CategoryName)
+                                {
+                                    <span>@categoryName</span>
+                                }
+                            </td>
+                            <td>@item.FullName</td>
+                            <td><a asp-action="Update" asp-route-id="@item.ArticleID" class="btn btn-success">Güncelle</a></td>
+                            <td><a asp-action="Delete" asp-route-id="@item.ArticleID" class="btn btn-danger">Sil</a></td>
+                            <td><a asp-action="Detail" asp-route-id="@item.ArticleID" class="btn btn-info">Detay</a></td>
+                        </tr>
 
+                    }
+                </table>
+
+            </div>
         </div>
     </div>
 </div>

@@ -1,11 +1,15 @@
 ﻿@model List<GetArticleVM>
 <br />
+<div class="bg-info text-white text-center py-2 ">
+    <h2> Bloglarımız</h2>
+</div>
+<br />
 
 <div class="row">
     @foreach (var item in Model)
     {
         <div class="col-md-6 mb-4">
-            <!-- Dört sütunlu (md) bir grid içinde iki kart göstermek için col-md-6 kullanıyoruz ve mb-4 ile kartlar arasında boşluk ekliyoruz. -->
+            
             <div class="card" style="max-width: 540px;">
                 <div class="row no-gutters">
                     <div class="col-md-4">
@@ -30,8 +34,13 @@
                             }
 
                             <p class="card-text"><small class="text-muted">Yazma Tarihi : @item.CreatedDate.ToLongDateString()</small></p>
-                            <p class="card-text">Yazar :<a asp-action="ProfilDetail" asp-route-id="@item.AppUserID">@item.UserFullName</a></p>
-                            <p class="card-text"> Kategori : @item.CategoryName</p>
+                            <p class="card-text">Yazar :<a asp-action="UserDetail" asp-controller="Users" asp-route-id="@item.AppUserID">@item.UserFullName</a></p>
+                            <p class="card-text">
+                                Kategori :  @foreach (var categoryName in item.CategoryName)
+                                {
+                                    <span>@categoryName</span>
+                                }
+                            </p>
                         </div>
                     </div>
                 </div>

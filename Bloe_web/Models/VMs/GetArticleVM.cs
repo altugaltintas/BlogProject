@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Bloe_web.Models.VMs
 {
@@ -11,8 +12,8 @@ namespace Bloe_web.Models.VMs
         public string ImagePath { get; set; }
         public DateTime CreatedDate { get; set; }
         public string AppUserID { get; set; }
-        public string CategoryName { get; set; }
-
+        //public string CategoryName { get; set; }
+        public List<string> CategoryName { get; set; }
         public string UserFullName { get; set; }
 
 

@@ -1,18 +1,45 @@
 ﻿@model List<TopFourUserVM>
 
-
-@foreach (var item in Model)
+@for (int i = 0; i < Model.Count; i += 3)
 {
-    
-    <div class="card">
-        <div class="card-body">
+    <div class="row">
+        @if (i < Model.Count)
+        {
+            <div class="col-sm-4 mb-3 mb-sm-0">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"> <a asp-action="UserDetail" asp-controller="Users" asp-route-id="@Model[i].UserID">@Model[i].FullNAme</a> </h5>
+                        <p class="card-text">Tüm Makale Sayısı @Model[i].AllArticleCounnt</p>
+                        <p class="card-text">Tüm Okunabilir Makale Sayısı @Model[i].AllNotPassiveArticleCount</p>
+                    </div>
+                </div>
+            </div>
+        }
 
-            <p>Yazar Adı : <a asp-action="" asp-controller="" asp-route-id="@item.UserID">@item.FullNAme</a> </p>
-            <p>Tüm Makale  Sayısı @item.AllArticleCounnt</p>
-            <p>Tüm Okunabilir Makale  Sayısı @item.AllNotPassiveArticleCount</p>
-        </div>
+        @if (i + 1 < Model.Count)
+        {
+            <div class="col-sm-4 mb-3 mb-sm-0">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"> <a asp-action="UserDetail" asp-controller="Users" asp-route-id="@Model[i + 1].UserID">@Model[i + 1].FullNAme</a> </h5>
+                        <p class="card-text">Tüm Makale Sayısı @Model[i + 1].AllArticleCounnt</p>
+                        <p class="card-text">Tüm Okunabilir Makale Sayısı @Model[i + 1].AllNotPassiveArticleCount</p>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (i + 2 < Model.Count)
+        {
+            <div class="col-sm-4 mb-3 mb-sm-0">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"> <a asp-action="UserDetail" asp-controller="Users" asp-route-id="@Model[i + 2].UserID">@Model[i + 2].FullNAme</a> </h5>
+                        <p class="card-text">Tüm Makale Sayısı @Model[i + 2].AllArticleCounnt</p>
+                        <p class="card-text">Tüm Okunabilir Makale Sayısı @Model[i + 2].AllNotPassiveArticleCount</p>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
-       
-        
-    
 }

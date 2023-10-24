@@ -1,0 +1,39 @@
+﻿@model AdminUpdateCategoryDTO
+
+
+<div class="row">
+    <div class="card col-md-8 offset-2">
+        <div class="card-text">Category Update Panel</div>
+        <div class="card-body">
+            <form asp-action="Update" method="post">
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" type="text" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Desciription"></label>
+                    <input asp-for="Desciription" type="text" class="form-control" />
+                    <span asp-validation-for="Desciription" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group">
+
+                    <input asp-for="ID" type="hidden" />
+
+                </div>
+                <div class="form-group">
+
+                    <input type="submit" value="Kaydet" class="btn btn-success" />
+
+                </div>
+
+
+            </form>
+        </div>
+
+    </div>
+
+
+
+</div>

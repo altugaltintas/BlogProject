@@ -11,7 +11,10 @@ namespace Bloe_web.Areas.Member.Models.VMs
     public class ArticleCreateVM
     {
 
-      
+        public ArticleCreateVM()
+        {
+            SelectedCategoryIDs = new List<int>();
+        }
 
         // article için proplaar ihtiyaç var
 
@@ -32,8 +35,7 @@ namespace Bloe_web.Areas.Member.Models.VMs
 
         //CAtegory
         [Required(ErrorMessage = "Lütfen bir kategori seçiniz")]
-        public int CategoryID { get; set; }
-
+        public List<int> SelectedCategoryIDs { get; set; }
 
 
         public List<GetCategoryDTO> Categories { get; set; }
@@ -42,6 +44,6 @@ namespace Bloe_web.Areas.Member.Models.VMs
         [Required(ErrorMessage = "Lütfen bir kullanıcı seçiniz")]
         public string AppUserID { get; set; }
 
-
+        
     }
 }

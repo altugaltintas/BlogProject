@@ -14,7 +14,10 @@ namespace Blog_model.TypeConfigurations.Concrete
 
             // Identityrolemap bir kütüphane öğesi doğrudan oradan yakaladı bir data oluşturduk
 
-            builder.HasData(new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "Mamber", NormalizedName = "MAMBER" });
+            builder.HasData(new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "Member", NormalizedName = "MEMBER" });
+
+            builder.HasData(new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "Admın", NormalizedName = "ADMIN" });
         }
+
     }
 }

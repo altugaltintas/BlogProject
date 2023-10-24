@@ -2,6 +2,7 @@
 using Bloe_web.Areas.Member.Models.DTOs;
 using Bloe_web.Areas.Member.Models.VMs;
 using Blog_Dal.Context;
+using Blog_Dal.Repositories.Concrete;
 using Blog_Dal.Repositories.Interfaces.Concrete;
 using Blog_model.Models.Concrete;
 using Blog_model.Models.Enums;
@@ -31,8 +32,9 @@ namespace Bloe_web.Areas.Member.Controllers
         private readonly IMapper _mapper;
         private readonly ProjectContext _project;
         private readonly ILikeRepo _likeRepo;
+        private readonly ICommentRepo _commentRepo;
 
-        public ArticleController(UserManager<AppUser> userManager, ICategoryRepo cRepo, IArticleRepo articleRepo, IMapper mapper, ProjectContext project,ILikeRepo likeRepo)
+        public ArticleController(UserManager<AppUser> userManager, ICategoryRepo cRepo, IArticleRepo articleRepo, IMapper mapper, ProjectContext project, ILikeRepo likeRepo, ICommentRepo commentRepo)
         {
             _userManager = userManager;
             _cRepo = cRepo;
@@ -40,6 +42,7 @@ namespace Bloe_web.Areas.Member.Controllers
             _mapper = mapper;
             _project = project;
             _likeRepo = likeRepo;
+            _commentRepo = commentRepo;
         }
 
 
@@ -70,6 +73,18 @@ namespace Bloe_web.Areas.Member.Controllers
             {
                 var article = _mapper.Map<Article>(vM);
 
+                var selectedCategoryIds = vM.SelectedCategoryIDs;
+
+                var selectedCategories = _cRepo.GetDefaults(expression: c => selectedCategoryIds.Contains(c.ID));
+
+
+                var articleCategories = selectedCategories.Select(category => new ArticleCategory
+                {
+                    Article = article,
+                    Category = category
+                }).ToList();
+
+                article.ArticleCategories = articleCategories;
                 Guid guid = Guid.NewGuid();
                 var image = Image.Load(vM.Image.OpenReadStream());  //using SixLabors.ImageSharp;kütüphansei 
 
@@ -79,6 +94,7 @@ namespace Bloe_web.Areas.Member.Controllers
 
 
                 article.ImagePath = $"/Resimler/{guid}.jpg";
+                
 
                 _articleRepo.Create(article);
                 return RedirectToAction("List");
@@ -105,13 +121,13 @@ namespace Bloe_web.Areas.Member.Controllers
                 selector: a => new GetArticleVM()
                 {
                     ArticleID = a.ID,
-                    CategoryName = a.Category.Name,
+                    CategoryName = a.ArticleCategories.Select(ac => ac.Category.Name).ToList(),
                     FullName = a.AppUser.FullName,
                     Title = a.Title,
                     Image = a.ImagePath
                 },
                 expression: a => a.Statu != Statu.Passive && a.AppUserID == appUser.Id,
-                include: a => a.Include(a => a.AppUser).Include(a => a.Category)
+                include: a => a.Include(a => a.AppUser).Include(a => a.ArticleCategories).ThenInclude(ac => ac.Category)
 
                 );
 
@@ -157,9 +173,9 @@ namespace Bloe_web.Areas.Member.Controllers
                     Guid guid = Guid.NewGuid();
                     image.Save($"wwwroot/Resimler/{guid}.jpeg");
 
-                    
+
                     article1.ImagePath = $"/Resimler/{guid}.jpeg";
-                    
+
                     _project.Entry(article1).State = EntityState.Detached;
 
                     _articleRepo.Update(article1);
@@ -170,36 +186,24 @@ namespace Bloe_web.Areas.Member.Controllers
                     return RedirectToAction("List");
 
                 }
-                //var article = _mapper.Map<Article>(vM);
 
-                //using var image = Image.Load(vM.Image.OpenReadStream());
-                //image.Mutate(a => a.Resize(70, 70));
-
-                //Guid guid = Guid.NewGuid();
-                //image.Save($"wwwroot/Resimler/{guid}.jpeg");
-
-                //article.ImagePath = $"/Resimler/{guid}.jpeg";
-
-
-                //_articleRepo.Update(article);
-                //return RedirectToAction("List");
 
             }
             else
             {
-                // Mevcut makaleyi DbContext üzerinden al
+
                 var existingArticle = _project.Articles.FirstOrDefault(a => a.ID == vM.ID);
 
                 if (existingArticle != null)
-                {                    
+                {
                     vM.ImagePath = existingArticle.ImagePath;
-                   
+
                     var article = _mapper.Map<Article>(vM);
-                    
+
                     vM.Categories = _cRepo.GetByDefaults(
                         selector: a => new GetCategoryDTO { ID = a.ID, Name = a.Name },
                         expression: a => a.Statu != Statu.Passive);
-                    
+
                     _project.Entry(existingArticle).CurrentValues.SetValues(article);
                     _project.SaveChanges();
 
@@ -208,16 +212,6 @@ namespace Bloe_web.Areas.Member.Controllers
 
                 return RedirectToAction("List");
 
-                //vM.ImagePath = _articleRepo.GetDefault(a => a.ID == vM.ID).ImagePath;
-                //var article = _mapper.Map<Article>(vM);
-
-
-                //vM.Categories = _cRepo.GetByDefaults(
-                // selector: a => new GetCategoryDTO { ID = a.ID, Name = a.Name },
-                // expression: a => a.Statu != Statu.Passive);
-
-                //_articleRepo.Update(article);
-                //return RedirectToAction("List");
             }
 
 
@@ -245,7 +239,7 @@ namespace Bloe_web.Areas.Member.Controllers
         public async Task<IActionResult> Detail(int id)
 
         {
-            AppUser appUser= await _userManager.GetUserAsync(User);
+            AppUser appUser = await _userManager.GetUserAsync(User);
 
             var article = _articleRepo.GetByDefault
                (selector: a => new ArticleDetailVM()
@@ -255,23 +249,51 @@ namespace Bloe_web.Areas.Member.Controllers
                    CreatedDate = a.CreatedDate,
                    Image = a.ImagePath,
                    Content = a.Content,
-                   Likes = a.Likes,
-                   CategoryID = a.CategoryID,
-                   CategoryName = a.Category.Name,
+                   Likes = a.Likes,                   
                    UserID = a.AppUserID,
                    UserCreatedDate = a.AppUser.CreatedDate,
                    UserFUllName = a.AppUser.FullName,
                    UserImage = a.AppUser.ImagePath,
-                   AppUserID=appUser.Id
+                   AppUserID = appUser.Id,
+                   OkunmaSayisi = a.OkunmaSayisi,
+
+                   CategoryID = a.ArticleCategories.Select(ac => ac.Category.ID).ToList(),
+                   CategoryName = a.ArticleCategories.Select(ac => ac.Category.Name).ToList(),
+                   Categories = a.ArticleCategories.Select(ac => new GetCategoryDTO
+                   {
+                       ID = ac.Category.ID,
+                       Name = ac.Category.Name
+                   }).ToList()
 
                },
+
                expression: a => a.Statu != Statu.Passive && a.ID == id,
-               include: a => a.Include(a => a.AppUser).Include(a => a.Category)
+              include: a => a.Include(a => a.AppUser).Include(a => a.ArticleCategories).ThenInclude(ac => ac.Category)
+
                );
+            var article1 = _articleRepo.GetDefault(a => a.ID == id);
+            if (article1!=null)
+            {
+                article1.OkunmaSayisi++;
+                _articleRepo.Update(article1);
+            }
+
+
+            ViewData["ArticleID"] = article.ArticleID;
+
+            int karakterSayisi = article.Content.Length;
+            double süre = 2.0 / 100; // 100 karakter için 2 dakika
+
+            double okumaSuresi = karakterSayisi * süre;
+
+            article.OkumaSuresi = okumaSuresi.ToString();
+
+
+
             return View(article);
         }
 
-        public async Task<IActionResult> Like (int id)
+        public async Task<IActionResult> Like(int id)
         {
             Article article = _articleRepo.GetDefault(a => a.ID == id);
 
@@ -283,7 +305,7 @@ namespace Bloe_web.Areas.Member.Controllers
 
             return RedirectToAction("Detail", new { id = id }); // burada detail actionuna gönderdiğimz parametre değişkenin adı neyse ona elimizdeki MakaleID yi atıyoruz çünkü detail sayfası makaleID siz çalışmaz
         }
-        public async Task<IActionResult> Unlike (int id) //makaleid
+        public async Task<IActionResult> Unlike(int id) //makaleid
         {
             Article article = _articleRepo.GetDefault(a => a.ID == id);
 
@@ -296,7 +318,53 @@ namespace Bloe_web.Areas.Member.Controllers
 
             return RedirectToAction("Detail", new { id = id });
         }
-       
 
+        public IActionResult CategoryTop(int id)
+        {
+            List<GetArticleVM> list = _articleRepo.GetByDefaults(
+                selector: a => new GetArticleVM
+                {
+                    Title = a.Title,
+                    Content = a.Content,
+                    ImagePath = a.ImagePath,
+                    CreatedDate = a.CreatedDate,
+                    FullName = a.AppUser.FullName,
+                    CategoryName = a.ArticleCategories.Select(ac => ac.Category.Name).ToList(),
+                    AppUserID = a.AppUserID,                  
+                    ArticleID = a.ID
+                },
+                expression: a => a.Statu != Statu.Passive && a.ArticleCategories.Any(ac => ac.CategoryID == id),
+                include: a => a.Include(a => a.ArticleCategories).ThenInclude(ac => ac.Category),
+                orderBy: a => a.OrderByDescending(a => a.CreatedDate)
+            ).ToList();
+
+            return View(list);
+        }
+
+
+
+        [HttpPost]
+        public  async Task< IActionResult> AddComment(CommentVM vM)
+        {
+           
+            if (ModelState.IsValid)
+            {
+                AppUser appUser = await _userManager.GetUserAsync(User);
+                
+               
+                var comment = new Comment
+                {
+                    Text = vM.Text,
+                    AppUserID = appUser.Id,
+                    ArticleID = vM.ArticleID
+                };
+
+                _commentRepo.Create(comment);
+
+                return RedirectToAction("Detail", new { id = vM.ArticleID });
+            }
+           
+            return RedirectToAction("Detail", new { id = vM.ArticleID });
+        }
     }
 }

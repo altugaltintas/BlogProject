@@ -2,6 +2,7 @@
 using Bloe_web.Models.DTOs;
 using Blog_Dal.Repositories.Interfaces.Concrete;
 using Blog_model.Models.Concrete;
+using Blog_model.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SixLabors.ImageSharp;
@@ -37,23 +38,37 @@ namespace Bloe_web.Controllers
 
 
         [HttpPost]
-        public  async  Task<IActionResult> Register(RegisterDTO dTO)
+        public async Task<IActionResult> Register(RegisterDTO dTO)
         {
             if (ModelState.IsValid)   //automapper var unutma 
             {
-                AppUser appUser = _mapper.Map<AppUser>(dTO);
+                bool isEmailUnique = _userRepo.IsEmailUnique(dTO.Email);
+                bool isUserNameUnique = _userRepo.IsUserlUnique(dTO.UserName);
 
+                if (isEmailUnique && isUserNameUnique)
+                {
+                    AppUser appUser = _mapper.Map<AppUser>(dTO);
 
-                var image = Image.Load(dTO.Image.OpenReadStream());  //using SixLabors.ImageSharp;kütüphansei 
+                    var image = Image.Load(dTO.Image.OpenReadStream());
+                    image.Mutate(a => a.Resize(70, 70));
+                    image.Save($"wwwroot/Resimler/{appUser.UserName}.jpg");
+                    appUser.ImagePath = $"/Resimler/{appUser.UserName}.jpg";
 
-                //Mutate şekil vermek demek
-                image.Mutate(a => a.Resize(70, 70));
-                image.Save($"wwwroot/Resimler/{appUser.UserName}.jpg");
+                    await _userRepo.Create(appUser);
+                    return RedirectToAction("Login");
+                }
 
-                appUser.ImagePath = $"/Resimler/{appUser.UserName}.jpg";
+                if (!isEmailUnique)
+                {
+                    ModelState.AddModelError("Email", "Bu e-posta adresi zaten kullanılıyor.");
+                }
 
-                await _userRepo.Create(appUser);
-                return RedirectToAction("Login");   // kayıttan sonra login ekranına döndürüyor
+                if (!isUserNameUnique)
+                {
+                    ModelState.AddModelError("UserName", "Bu kullanıcı adı zaten kullanılıyor.");
+                }
+
+               
 
             }
 
@@ -77,11 +92,32 @@ namespace Bloe_web.Controllers
                 AppUser appUser = await _userManager.FindByEmailAsync(dTO.Email);
                 if (appUser != null)
                 {
-                    SignInResult result = await _signInManager.PasswordSignInAsync(appUser.UserName, dTO.Password, false, false);
-                    if (result.Succeeded)
+                    
+                    if (appUser.Statu == Statu.Active || appUser.Statu == Statu.Modified)
                     {
-                        return Redirect(dTO.ReturnUrl ?? "/member/appuser/index");
+                        SignInResult result = await _signInManager.PasswordSignInAsync(appUser.UserName, dTO.Password, false, false);
+
+                        if (result.Succeeded)
+                        {
+                            var roles = await _userManager.GetRolesAsync(appUser);
+
+                            if (roles.Contains("Admın"))
+                            {
+                                return Redirect(dTO.ReturnUrl ?? "/admin/AppAdmin/index");
+                            }
+                            else
+                            {
+                                return Redirect(dTO.ReturnUrl ?? "/member/appuser/index");
+                            }
+                        }
                     }
+                    else
+                    {
+                        
+                        return View(dTO);
+                    }
+
+                   
                 }
 
             }

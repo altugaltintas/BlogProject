@@ -8,6 +8,7 @@ using Blog_model.Models.Enums;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Bloe_web.Areas.Member.Controllers
 {
@@ -123,5 +124,20 @@ namespace Bloe_web.Areas.Member.Controllers
             return RedirectToAction("List");
 
         }
+
+        public IActionResult MemList()
+        {
+
+            var categories = _categoryRepo.GetDefaults(a => a.Statu != Statu.Passive);
+            var list = categories.Select(a => new GetCategoryDTO
+            {
+                ID = a.ID,
+                Name = a.Name
+            }).ToList();
+
+            return View(list);
+        }
+       
+        
     }
 }

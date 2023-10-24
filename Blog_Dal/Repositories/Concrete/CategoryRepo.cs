@@ -16,6 +16,13 @@ namespace Blog_Dal.Repositories.Concrete
         {
         }
 
+
+        public List<Category> GetCategories()
+        {
+             return _context.Categories.ToList();
+        }
+      
+
         public List<Category> GetCategoryWithID(string id)
         {
             return _context.FollowedCategories.Include(a => a.AppUser).Include(a => a.Category).Where(a => a.AppUserID == id).Select(a => a.Category).ToList();

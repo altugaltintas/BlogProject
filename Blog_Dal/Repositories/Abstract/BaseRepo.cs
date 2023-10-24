@@ -35,6 +35,12 @@ namespace Blog_Dal.Repositories.Abstract
             // _table.Remove(entity);   // veritabanından siler.
             _context.SaveChanges();
         }
+        public void Active(T entity)
+        {
+            entity.Statu = Statu.Active;
+            // _table.Remove(entity);   // aktif yapar
+            _context.SaveChanges();
+        }
 
 
         public TResult GetByDefault<TResult>(

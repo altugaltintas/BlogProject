@@ -114,9 +114,6 @@ namespace Blog_Dal.Migrations
                     b.Property<string>("AppUserID")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("CategoryID")
-                        .HasColumnType("int");
-
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -126,6 +123,9 @@ namespace Blog_Dal.Migrations
 
                     b.Property<string>("ImagePath")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OkunmaSayisi")
+                        .HasColumnType("int");
 
                     b.Property<int>("Statu")
                         .HasColumnType("int");
@@ -138,9 +138,22 @@ namespace Blog_Dal.Migrations
 
                     b.HasIndex("AppUserID");
 
+                    b.ToTable("Articles");
+                });
+
+            modelBuilder.Entity("Blog_model.Models.Concrete.ArticleCategory", b =>
+                {
+                    b.Property<int>("ArticleID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ArticleID", "CategoryID");
+
                     b.HasIndex("CategoryID");
 
-                    b.ToTable("Articles");
+                    b.ToTable("ArticleCategories");
                 });
 
             modelBuilder.Entity("Blog_model.Models.Concrete.Category", b =>
@@ -215,6 +228,27 @@ namespace Blog_Dal.Migrations
                     b.ToTable("Likes");
                 });
 
+            modelBuilder.Entity("Blog_model.Models.Concrete.OldPasswordHistory", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("oldPasswordHistories");
+                });
+
             modelBuilder.Entity("Blog_model.Models.Concrete.UserFollowedCategory", b =>
                 {
                     b.Property<string>("AppUserID")
@@ -259,10 +293,17 @@ namespace Blog_Dal.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a268d7a5-3096-4549-aea0-69751beb2fd1",
-                            ConcurrencyStamp = "356fdf9b-96b8-475d-8a70-b5ffc7447847",
-                            Name = "Mamber",
-                            NormalizedName = "MAMBER"
+                            Id = "6290ab80-4610-4914-b286-0953dac05cb2",
+                            ConcurrencyStamp = "0bc6311d-1470-4665-9987-667bfa7667a7",
+                            Name = "Member",
+                            NormalizedName = "MEMBER"
+                        },
+                        new
+                        {
+                            Id = "f4489659-0dc8-4bb3-aacc-7617c7294917",
+                            ConcurrencyStamp = "ef17934c-3ac5-4a09-823d-8ae5ed2b4e8a",
+                            Name = "Admın",
+                            NormalizedName = "ADMIN"
                         });
                 });
 
@@ -376,11 +417,20 @@ namespace Blog_Dal.Migrations
                         .WithMany("Articles")
                         .HasForeignKey("AppUserID")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Blog_model.Models.Concrete.ArticleCategory", b =>
+                {
+                    b.HasOne("Blog_model.Models.Concrete.Article", "Article")
+                        .WithMany("ArticleCategories")
+                        .HasForeignKey("ArticleID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Blog_model.Models.Concrete.Category", "Category")
-                        .WithMany("Articles")
+                        .WithMany("ArticleCategories")
                         .HasForeignKey("CategoryID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

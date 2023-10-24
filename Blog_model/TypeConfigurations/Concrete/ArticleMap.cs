@@ -18,7 +18,9 @@ namespace Blog_model.TypeConfigurations.Concrete
             // nap prop
             //category
 
-            builder.HasOne(a => a.Category).WithMany(a => a.Articles).HasForeignKey(a => a.CategoryID).OnDelete(DeleteBehavior.Restrict);
+            //builder.HasOne(a => a.Category).WithMany(a => a.Articles).HasForeignKey(a => a.CategoryID).OnDelete(DeleteBehavior.Restrict);
+
+
 
 
             //user

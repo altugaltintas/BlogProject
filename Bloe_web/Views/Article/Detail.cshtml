@@ -1,7 +1,7 @@
 ﻿@model ArticleDetailVM
 
 
-<div class="container">
+<div  class="container">
 
 
     <div class="jumbotron p-4 p-md-5 text-white rounded bg-dark">
@@ -15,11 +15,24 @@
             <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                 <div class="col p-4 d-flex flex-column position-static">
 
-                    <h3 class="mb-0">Makale Yazarı: <a asp-action="UserDetail" asp-controller="AppUser" asp-area="Member" asp-route-id="@Model.UserID">@Model.UserFUllName</a> </h3>
+                    <h3 class="mb-0">Makale Yazarı: <a asp-action="UserDetail" asp-controller="Users" asp-route-id="@Model.UserID">@Model.UserFUllName</a> </h3>
                     <div class="mb-1 text-muted">Makale Yazarı @Model.UserCreatedDate.ToShortDateString() beri aramızda</div>
-                    <p class="card-text mb-auto">Makale Kategorisi: <a asp-action="FilterWithCategory" asp-route-id="@Model.CategoryID">@Model.CategoryName</a></p>
+
+
+                    <div>
+                        <p class="card-text mb-auto">Kategoriler</p>
+                        @foreach (var category in Model.Categories)
+                        {
+                            <a asp-controller="CategoryGen" asp-action="CategoryTop5" asp-route-id="@category.ID">@category.Name</a>
+                        }
+
+                    </div>
+
+
                     <p>Makalenin oluşma tarihi @Model.CreatedDate</p>
                     <p>Makale Beğeni Sayisi @Model.Likes.Count()</p>
+                    <p>Makale Okuma Sayisi @Model.OkunmaSayisi </p>
+                    
 
                 </div>
                 <div class="col-auto d-none d-lg-block">
@@ -37,6 +50,8 @@
             <div class="blog-post">
                 <h2 class="blog-post-title">@Model.Title</h2>
                 <p class="blog-post-meta">@Model.CreatedDate.ToShortDateString() <a href="#">@Model.UserFUllName</a></p>
+                <div class="mb-1 text-muted">Tahmini okuma Süresi @Model.OkumaSuresi  dakika..</div>
+                <br />
                 <p>@Model.Content</p>
             </div>
            

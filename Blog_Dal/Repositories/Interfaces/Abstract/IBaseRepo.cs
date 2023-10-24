@@ -18,6 +18,8 @@ namespace Blog_Dal.Repositories.Interfaces.Abstract
         void Update(T entity);
         void Delete(T entity);
 
+        void Active(T entity);
+
 
         T GetDefault(Expression<Func<T, bool>> expression);    // tek bir T nesnesini bir expression sonucu döner
 

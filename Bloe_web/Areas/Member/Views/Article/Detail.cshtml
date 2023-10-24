@@ -15,47 +15,76 @@
             <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                 <div class="col p-4 d-flex flex-column position-static">
 
-                    <h3 class="mb-0">Makale Yazarı: <a asp-action="UserDetail" asp-controller="AppUser" asp-area="Member" asp-route-id="@Model.UserID">@Model.UserFUllName</a> </h3>
+                    <h3 class="mb-0">Makale Yazarı: <a asp-action="UserDetail" asp-controller="Users" asp-area="Member" asp-route-id="@Model.UserID">@Model.UserFUllName</a> </h3>
                     <div class="mb-1 text-muted">Makale Yazarı @Model.UserCreatedDate.ToShortDateString() beri aramızda</div>
-                    <p class="card-text mb-auto">Makale Kategorisi: <a asp-action="FilterWithCategory" asp-route-id="@Model.CategoryID">@Model.CategoryName</a></p>
+
+                    
+                    <div>
+                        <p class="card-text mb-auto">Kategoriler</p>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <a asp-controller="Article" asp-action="CategoryTop" asp-route-id="@category.ID">@category.Name</a>
+                            }
+                       
+                    </div>
+
+                    
                     <p>Makalenin oluşma tarihi @Model.CreatedDate</p>
                     <p>Makale Beğeni Sayisi @Model.Likes.Count()</p>
+                    <p>Makale Okuma Sayisi @Model.OkunmaSayisi </p>
 
+                    </>
+                    <div class="col-auto d-none d-lg-block">
+                        <img src="@Model.UserImage" width="200" height="300" />
+                    </div>
                 </div>
-                <div class="col-auto d-none d-lg-block">
-                    <img src="@Model.UserImage" width="200" height="300"/>
-                </div>
-            </div>
-        </div>        
-    </div>
-</div>
-<main role="main" class="container">
-    <div class="row">
-        <div class="col-md-8 blog-main">
-            
-
-            <div class="blog-post">
-                <h2 class="blog-post-title">@Model.Title</h2>
-                <p class="blog-post-meta">@Model.CreatedDate.ToShortDateString() <a href="#">@Model.UserFUllName</a></p>
-                <p>@Model.Content</p>                
-            </div>    
-           <div class="row m-3">
-               @if (Model.Likes.Any(a=> a.AppUserID==Model.AppUserID))
-                {
-                    <a asp-action="Unlike" asp-controller="Article" asp-route-id="@Model.ArticleID">
-                       <i class="fa fa-heart" style="color:red;"></i>
-                       <label>@Model.Likes.Count()</label>
-                    </a>
-
-                }
-                else
-                {
-                    <a asp-action="Like"  asp-route-id="@Model.ArticleID">
-                        <i class="fa fa-heart-o" style="color:red;"></i>
-                        <label>@Model.Likes.Count()</label>
-                    </a>
-                }
             </div>
         </div>
     </div>
-</main>
+    <main role="main" class="container">
+        <div class="row">
+            <div class="col-md-8 blog-main">
+
+
+                <div class="blog-post">
+                    <h2 class="blog-post-title">@Model.Title</h2>
+                    <p class="blog-post-meta">@Model.CreatedDate.ToShortDateString() <a href="#">@Model.UserFUllName</a></p>
+                    @*<div class="mb-1 text-muted">Tahmini okuma Süresi @Model.OkumaSuresi  dakika..</div>*@
+                    <div class="mb-1 text-muted">
+                        @if (double.TryParse(Model.OkumaSuresi, out double okumaSuresi))
+                        {
+                            <text>Tahmini okuma Süresi @okumaSuresi.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) dakika..</text>
+                        }
+                    </div>
+                    <br />
+                    <p>@Model.Content</p>
+                </div>
+                <div class="row m-3">
+                    @if (Model.Likes.Any(a => a.AppUserID == Model.AppUserID))
+                    {
+                        <a asp-action="Unlike" asp-controller="Article" asp-route-id="@Model.ArticleID">
+                            <i class="fa fa-heart" style="color:red;"></i>
+                            <label>@Model.Likes.Count()</label>
+                        </a>
+
+                    }
+                    else
+                    {
+                        <a asp-action="Like" asp-route-id="@Model.ArticleID">
+                            <i class="fa fa-heart-o" style="color:red;"></i>
+                            <label>@Model.Likes.Count()</label>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="col-md-10">
+        <br />
+        @await Component.InvokeAsync("CommentsDetail")
+    </div>
+    <div class="col-md-10">
+        <br />
+        @await Component.InvokeAsync("Comments")
+    </div>
+</div>

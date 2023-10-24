@@ -20,6 +20,10 @@ namespace Blog_Dal.Context
         public DbSet<Like> Likes { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<UserFollowedCategory> FollowedCategories { get; set; }
+        public DbSet<OldPasswordHistory> oldPasswordHistories { get; set; }
+        public DbSet<ArticleCategory> ArticleCategories { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +33,7 @@ namespace Blog_Dal.Context
             modelBuilder.ApplyConfiguration(new IdentityRoleMap());
             modelBuilder.ApplyConfiguration(new LikeMap());
             modelBuilder.ApplyConfiguration(new UserFollowedCategoryMap());
+            modelBuilder.ApplyConfiguration(new ArticleCategoryMap());
             base.OnModelCreating(modelBuilder);
 
         }

@@ -32,7 +32,7 @@ namespace Bloe_web.Areas.Member.Views.Shared.Components.OldUser
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var list = await _userManager.Users.Where(a => a.Statu != Statu.Passive).OrderBy(a=> a.CreatedDate)
+            var list = await _userManager.Users.Where(a => a.Statu != Statu.Passive && a.UserName!= "admin").OrderBy(a=> a.CreatedDate)
                                                     .Select(a => new TopFourUserVM()
                                                     {
                                                         FullNAme = a.FullName,

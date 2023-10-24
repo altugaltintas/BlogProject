@@ -60,6 +60,9 @@ namespace Bloe_web
 
             services.AddScoped<IUserFollowedCategoryRepo, UserFollowedCategoryRepo>();
             services.AddScoped<ILikeRepo, LikeRepo>();
+            services.AddScoped<ICommentRepo,CommentRepo>();
+            services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
+
             services.AddAuthentication();
             
         }

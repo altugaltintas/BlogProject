@@ -1,0 +1,48 @@
+﻿@model List<Category>
+
+
+<div class="row">
+    <div class="card col-md-8 offset-2">
+        <div class="card-body">
+            <div class="card-text">KategoriListeleme Paneli</div>
+            <p><a asp-action="Create">Yeni Kategori Ekle</a></p>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Kategori Adı</th>                        
+                        <th>Durumu</th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Statu</td>
+                            <td>
+                                <a asp-action="Update" asp-route-id="@item.ID" class="btn btn-success">Güncelle</a>
+
+                                @if (item.Statu == Blog_model.Models.Enums.Statu.Active || item.Statu == Blog_model.Models.Enums.Statu.Modified)
+                                {
+                                    <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-danger">Pasif yap</a>
+                                }
+                                else if (item.Statu == Blog_model.Models.Enums.Statu.Passive )
+                                {
+                                    <a asp-action="Active" asp-route-id="@item.ID" class="btn btn-danger">Aktif Yap</a>
+                                }
+                                                             
+                            </td>
+                        </tr>
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

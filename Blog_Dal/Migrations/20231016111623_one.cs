@@ -69,6 +69,21 @@ namespace Blog_Dal.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "oldPasswordHistories",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(nullable: true),
+                    PasswordHash = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_oldPasswordHistories", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -87,6 +102,31 @@ namespace Blog_Dal.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Articles",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    Statu = table.Column<int>(nullable: false),
+                    Title = table.Column<string>(nullable: false),
+                    Content = table.Column<string>(nullable: false),
+                    ImagePath = table.Column<string>(nullable: true),
+                    OkunmaSayisi = table.Column<int>(nullable: false),
+                    AppUserID = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Articles", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Articles_AspNetUsers_AppUserID",
+                        column: x => x.AppUserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -175,37 +215,6 @@ namespace Blog_Dal.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Articles",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    Statu = table.Column<int>(nullable: false),
-                    Title = table.Column<string>(nullable: false),
-                    Content = table.Column<string>(nullable: false),
-                    ImagePath = table.Column<string>(nullable: true),
-                    AppUserID = table.Column<string>(nullable: true),
-                    CategoryID = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Articles", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Articles_AspNetUsers_AppUserID",
-                        column: x => x.AppUserID,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Articles_Categories_CategoryID",
-                        column: x => x.CategoryID,
-                        principalTable: "Categories",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "FollowedCategories",
                 columns: table => new
                 {
@@ -223,6 +232,30 @@ namespace Blog_Dal.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_FollowedCategories_Categories_CategoryID",
+                        column: x => x.CategoryID,
+                        principalTable: "Categories",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ArticleCategories",
+                columns: table => new
+                {
+                    ArticleID = table.Column<int>(nullable: false),
+                    CategoryID = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArticleCategories", x => new { x.ArticleID, x.CategoryID });
+                    table.ForeignKey(
+                        name: "FK_ArticleCategories_Articles_ArticleID",
+                        column: x => x.ArticleID,
+                        principalTable: "Articles",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ArticleCategories_Categories_CategoryID",
                         column: x => x.CategoryID,
                         principalTable: "Categories",
                         principalColumn: "ID",
@@ -285,17 +318,22 @@ namespace Blog_Dal.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "a268d7a5-3096-4549-aea0-69751beb2fd1", "356fdf9b-96b8-475d-8a70-b5ffc7447847", "Mamber", "MAMBER" });
+                values: new object[] { "6290ab80-4610-4914-b286-0953dac05cb2", "0bc6311d-1470-4665-9987-667bfa7667a7", "Member", "MEMBER" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "f4489659-0dc8-4bb3-aacc-7617c7294917", "ef17934c-3ac5-4a09-823d-8ae5ed2b4e8a", "Admın", "ADMIN" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArticleCategories_CategoryID",
+                table: "ArticleCategories",
+                column: "CategoryID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Articles_AppUserID",
                 table: "Articles",
                 column: "AppUserID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Articles_CategoryID",
-                table: "Articles",
-                column: "CategoryID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -360,6 +398,9 @@ namespace Blog_Dal.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ArticleCategories");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -384,16 +425,19 @@ namespace Blog_Dal.Migrations
                 name: "Likes");
 
             migrationBuilder.DropTable(
+                name: "oldPasswordHistories");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Articles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Categories");
         }
     }
 }

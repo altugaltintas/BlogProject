@@ -21,6 +21,7 @@ namespace Blog_model.Models.Concrete
             Comments = new List<Comment>();
             Likes = new List<Like>();
             UserFollowedCategories = new List<UserFollowedCategory>();
+            
         }
 
         // buraya ıd eklemyioruz çünkü ıdentityuser kütüphanesinde var 
@@ -33,7 +34,7 @@ namespace Blog_model.Models.Concrete
             set { _createdDate = value; }
         }
 
-        private Statu _statu = Statu.Active;
+        private Statu _statu = Statu.Passive;
 
         public Statu Statu
         {

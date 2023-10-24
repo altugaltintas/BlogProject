@@ -1,0 +1,106 @@
+﻿@model List<Comment>
+@functions {
+    public string GetTimeAgo(DateTime dateTime)
+    {
+        var now = DateTime.Now;
+        var elapsed = now - dateTime;
+
+        if (elapsed.TotalMinutes < 1)
+        {
+            return "şimdi";
+        }
+        if (elapsed.TotalHours < 1)
+        {
+            var minutes = (int)elapsed.TotalMinutes;
+            return $"{minutes} dakika önce";
+        }
+        if (elapsed.TotalDays < 1)
+        {
+            var hours = (int)elapsed.TotalHours;
+            return $"{hours} saat önce";
+        }
+
+        var days = (int)elapsed.TotalDays;
+        return $"{days} gün önce";
+    }
+}
+<style>
+    .with-border {
+        border: 1px solid #ccc; /* Çerçeve oluşturur */
+        padding: 10px; /* Metin alanının içindeki boşluğu artırır */
+        background-color: #f5f5f5; /* Arkaplan rengi ekler */
+        border-radius: 5px; /* Yuvarlatılmış köşeler ekler */
+    }
+
+</style>
+
+
+@*<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">*@
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<div class="container">
+    <div class="row">
+        <div class="col-dm-12">
+            <h2>Yorumlar</h2>
+        </div><!-- /col-sm-12 -->
+    </div><!-- /row -->
+    @if (Model != null && Model.Any())
+    {
+        foreach (var comment in Model)
+        {
+            var timeAgo = GetTimeAgo(comment.CreatedDate);
+
+            <div class="card mb-3" style="max-width: 540px;">
+                <div class="row no-gutters">
+                    <div class="col-md-3 d-flex justify-content-center align-items-center">
+                        <img src="@comment.AppUser.ImagePath">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <div>
+                                <h5 class="card-title" style="display: inline-block; margin-left:20px;">@comment.AppUser.FullName</h5>
+                                <p class="card-text " style="display: inline-block;"><small class="text-muted">Last updated 3 mins ago</small></p>
+                            </div>
+                            <p class="card-text with-border">@comment.Text</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+            @*
+    <div class="row">
+    <div class="col-sm-1">
+    <div class="thumbnail">
+    <img class="img-responsive user-photo" src="@comment.AppUser.ImagePath">
+    </div><!-- /thumbnail -->
+    </div><!-- /col-sm-1 -->
+
+    <div class="col-sm-5">
+    <div class="panel panel-default">
+    <div class="panel-heading">
+    <strong>@comment.AppUser.FullName</strong> <span class="text-muted">(Yapıldı @timeAgo önce)</span>
+    </div>
+    <div class="panel-body">
+    <p> @comment.Text </p>
+    </div><!-- /panel-body -->
+    </div><!-- /panel panel-default -->
+    </div><!-- /col-sm-5 -->
+
+
+    </div>*@
+
+        }
+        <!-- /row -->
+    }
+    else
+    {
+        <p>Yorum yok</p>
+    }
+</div><!-- /container -->

@@ -18,15 +18,18 @@ namespace Bloe_web.Areas.Member.Models.VMs
         public DateTime CreatedDate { get; set; }
         public List<Like> Likes { get; set; }
 
+        public string OkumaSuresi { get; set; }
+
+        public int OkunmaSayisi { get; set; }
 
         //catagory
-                
-        public int CategoryID { get; set; }
-        public string CategoryName { get; set; }
 
+        public List<int> CategoryID { get; set; }
+        public List<string> CategoryName { get; set; }
 
+         public List<GetCategoryDTO> Categories { get; set; }
         //user 
-       
+
         public string UserID { get; set; }
         public string UserFUllName { get; set; }
         public string UserImage { get; set; }
@@ -35,8 +38,10 @@ namespace Bloe_web.Areas.Member.Models.VMs
         public string AppUserID { get; set; } // claımleri onaylanmış içerdeki kişi illa makale yazarı olmak zorunda değil
 
 
-        public DateTime UserCreatedDate { get; set; } 
+        public DateTime UserCreatedDate { get; set; }
 
-        // toDo : commetn???
+        // toDo : cometn???
+
+       
     }
 }

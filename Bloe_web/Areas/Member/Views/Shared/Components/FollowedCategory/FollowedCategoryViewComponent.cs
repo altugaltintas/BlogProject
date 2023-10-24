@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Bloe_web.Areas.Member.Views.Shared.Components.FollowedCategory
+namespace Bloe_web.Areas.Admin.Views.Shared.Components.FollowedCategory
 {
     public class FollowedCategoryViewComponent : ViewComponent
     {

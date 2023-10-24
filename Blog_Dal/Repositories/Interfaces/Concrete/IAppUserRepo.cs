@@ -15,5 +15,16 @@ namespace Blog_Dal.Repositories.Interfaces.Concrete
 
         Task Delete(AppUser appUser);
 
+        Task Active(AppUser appUser);
+
+        bool IsEmailUnique(string email);
+
+        bool IsUserlUnique(string user);
+
+        bool IsUserlUniqueHaric(string user, string currentUSer);
+
+        bool IsEmailUniqueHaric(string email, string currentUserEmail);
+
+        Task <bool> IsPasswordHistoryViolatedAsync(string userId, string newPassword, int passwordHistoryLimit);
     }
 }

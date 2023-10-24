@@ -1,0 +1,13 @@
+﻿@model CommentVM
+
+<h2>Yorum Ekle</h2>
+<form asp-action="AddComment" method="post">
+    <div class="form-group">
+        
+        <textarea class="form-control" id="Text" name="Text" rows="4" asp-for="Text"></textarea>
+        <span asp-validation-for="Text" class="text-danger"></span>
+    </div>
+    <input type="hidden" asp-for="ArticleID" />
+    <input type="hidden" asp-for="AppUserID" />
+    <button type="submit" class="btn btn-primary">Yorum Ekle</button>
+</form>

@@ -32,13 +32,13 @@ namespace Bloe_web.Views.Shared.Components.ArticleWith
                     ImagePath = a.ImagePath,
                     CreatedDate = a.CreatedDate,
                     UserFullName = a.AppUser.FullName,
-                    CategoryName = a.Category.Name,
+                    CategoryName = a.ArticleCategories.Select(ac => ac.Category.Name).ToList(),
                     AppUserID = a.AppUserID,
                     ArticleID = a.ID
                 },
-                expression: a=> a.Statu!=Statu.Passive,
-                include: a=> a.Include(a=> a.Category).Include(a=> a.AppUser),
-                orderBy: a=> a.OrderByDescending(a=> a.CreatedDate)
+                expression: a => a.Statu != Statu.Passive,
+                include: a => a.Include(a => a.AppUser).Include(a => a.ArticleCategories).ThenInclude(ac => ac.Category),
+                orderBy: a => a.OrderByDescending(a => a.CreatedDate)
                 ).Take(10).ToList();
 
             return View(list);

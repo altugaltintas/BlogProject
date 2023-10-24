@@ -1,0 +1,20 @@
+﻿@model List<GetCategoryVM>
+
+    <br />
+<div class="row">
+    <div class="card-text col-md-8 bg-info text-white text-center  offset-2 py-2 ">
+        <h2> Kategori Listesi</h2>
+    </div>
+    <br />
+    <div class="card col-md-8 offset-2">
+        <br />
+        <ul>
+            @foreach (var category in Model)
+            {
+                <li>
+                    <a asp-action="CategoryTop5" asp-controller="CategoryGen" asp-route-id="@category.ID">@category.Name</a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
